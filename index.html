@@ -2,22 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="style.css" />
-  <title>Dual Music Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dual Music Player - Week 1 Fix</title>
 </head>
 <body>
   <h1>Dual Music Player</h1>
-  <div id="profileInfo">Loading profile...</div>
-  <button id="simulateLoginBtn">Login with Google (Simulated)</button>
-  <div>
-    <input type="file" id="fileInput" accept="audio/*" multiple />
-    <button onclick="exportLibrary()">Export Library</button>
-  </div>
+
+  <input type="file" id="fileInput" multiple accept="audio/*" />
+  <button id="exportButton">Export Library</button>
+
   <ul id="songList"></ul>
-  <script src="db.js"></script>
-  <script src="profile.js"></script>
-  <script src="app.js"></script>
+
+  <script src="script.js"></script>
 </body>
 </html>
