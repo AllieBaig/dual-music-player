@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dual Music Player - Week 2</title>
+  <title>Dual Music Player - Week 3</title>
 </head>
 <body>
   <h1>Dual Music Player</h1>
@@ -16,11 +16,34 @@
     <p id="time">⏱️ Time Listened: 0 min</p>
   </section>
 
-  <input type="file" id="fileInput" multiple accept="audio/*" />
+  <input type="file" id="fileInput" multiple 
+    accept=".mp3,.m4a,.aac,.wav,.flac,.ogg,.mpga,audio/*" />
   <button id="exportButton">Export Library</button>
 
   <audio id="audioPlayer" controls></audio>
   <ul id="songList"></ul>
+
+  <hr>
+  <section id="playlists">
+    <h2>Playlists</h2>
+    <input type="text" id="newPlaylistName" placeholder="Create playlist..." />
+    <button id="createPlaylistBtn">Create</button>
+    <ul id="playlistList"></ul>
+  </section>
+
+  <section id="groupedSongs">
+    <h2>All Songs (Grouped)</h2>
+    <div id="groupList"></div>
+    <button id="addToPlaylistBtn">Add Selected to Playlist</button>
+  </section>
+
+  <section id="whiteNoise">
+    <h2>White Noise Player</h2>
+    <button id="toggleWhiteNoise">Play/Pause White Noise</button>
+    <audio id="whiteNoisePlayer" loop>
+      <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3" type="audio/mp3">
+    </audio>
+  </section>
 
   <script src="script.js"></script>
 </body>

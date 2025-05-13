@@ -1,102 +1,103 @@
-// Profile Initialization
-let userProfile = JSON.parse(localStorage.getItem('userProfile')) || {
-  name: 'Guest',
-  isTemp: true,
-  totalMinutes: 0,
-  badge: 'None'
-};
-
-updateProfileUI();
-
-document.getElementById('loginBtn').addEventListener('click', () => {
-  const confirmed = confirm("Simulate Google login?");
-  if (confirmed) {
-    userProfile = {
-      ...userProfile,
-      name: 'John (Google)',
-      isTemp: false
-    };
-    localStorage.setItem('userProfile', JSON.stringify(userProfile));
-    updateProfileUI();
-    alert("Logged in! Temp data transferred.");
-  }
-});
-
-function updateProfileUI() {
-  document.getElementById('username').textContent = `👤 ${userProfile.name}`;
-  document.getElementById('badge').textContent = `🏅 Badge: ${userProfile.badge}`;
-  document.getElementById('time').textContent = `⏱️ Time Listened: ${userProfile.totalMinutes} min`;
-}
-
-document.getElementById('fileInput').addEventListener('change', async (e) => {
-  const files = Array.from(e.target.files);
-  const storedSongs = JSON.parse(localStorage.getItem('songs') || '[]');
-
-  for (const file of files) {
-    const metadata = {
-      id: crypto.randomUUID(),
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      createdAt: Date.now()
-    };
-
-    storedSongs.push(metadata);
-  }
-
-  localStorage.setItem('songs', JSON.stringify(storedSongs));
-  displaySongs();
-});
-
-document.getElementById('exportButton').addEventListener('click', () => {
-  const songs = JSON.parse(localStorage.getItem('songs') || '[]');
-  const blob = new Blob([JSON.stringify(songs, null, 2)], { type: 'application/json' });
-
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'music_library.json';
-  a.click();
-});
 
 function displaySongs() {
-  const list = document.getElementById('songList');
-  list.innerHTML = '';
-  const songs = JSON.parse(localStorage.getItem('songs') || '[]');
+  const fileInput = document.getElementById("fileInput");
+  const audioPlayer = document.getElementById("audioPlayer");
+  const songList = document.getElementById("songList");
+  const songs = JSON.parse(localStorage.getItem("songs") || "[]");
+  songList.innerHTML = "";
 
-  songs.forEach(song => {
-    const li = document.createElement('li');
-    li.textContent = `${song.name} (${(song.size / 1024).toFixed(1)} KB)`;
-    list.appendChild(li);
+  songs.forEach((song, index) => {
+    const li = document.createElement("li");
+    li.textContent = song.name;
+    li.onclick = () => {
+      audioPlayer.src = song.url;
+      audioPlayer.play();
+    };
+    songList.appendChild(li);
+  });
+
+  fileInput.addEventListener("change", () => {
+    const files = Array.from(fileInput.files);
+    const newSongs = files.map((file, i) => {
+      const url = URL.createObjectURL(file);
+      return { id: Date.now() + i, name: file.name, url };
+    });
+    const updated = [...songs, ...newSongs];
+    localStorage.setItem("songs", JSON.stringify(updated));
+    displaySongs();
   });
 }
 
-window.onload = displaySongs;
+function groupSongs() {
+  const allSongs = JSON.parse(localStorage.getItem('songs') || '[]');
+  const grouped = {};
+  allSongs.forEach(song => {
+    const letter = /^[a-zA-Z]/.test(song.name[0]) ? song.name[0].toUpperCase() : '0-9';
+    if (!grouped[letter]) grouped[letter] = [];
+    grouped[letter].push(song);
+  });
 
-// Listening Tracker
-const audio = document.getElementById('audioPlayer');
-let playStartTime = null;
-
-audio.addEventListener('play', () => {
-  playStartTime = Date.now();
-});
-
-audio.addEventListener('pause', () => {
-  if (playStartTime) {
-    const duration = Math.floor((Date.now() - playStartTime) / 60000); // minutes
-    userProfile.totalMinutes += duration;
-    checkBadges();
-    localStorage.setItem('userProfile', JSON.stringify(userProfile));
-    updateProfileUI();
-    playStartTime = null;
-  }
-});
-
-function checkBadges() {
-  const hour = new Date().getHours();
-
-  if (hour >= 22 || hour < 5) {
-    userProfile.badge = '🦉 Night Owl';
-  } else if (userProfile.totalMinutes > 60) {
-    userProfile.badge = '🐘 Endurance Listener';
-  }
+  const container = document.getElementById('groupList');
+  container.innerHTML = '';
+  Object.keys(grouped).sort().forEach(letter => {
+    const section = document.createElement('div');
+    section.innerHTML = `<h3>${letter}</h3>`;
+    grouped[letter].forEach(song => {
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = song.id;
+      const label = document.createElement('label');
+      label.textContent = ` ${song.name}`;
+      section.appendChild(checkbox);
+      section.appendChild(label);
+      section.appendChild(document.createElement('br'));
+    });
+    container.appendChild(section);
+  });
 }
+
+document.getElementById('createPlaylistBtn').addEventListener('click', () => {
+  const name = document.getElementById('newPlaylistName').value.trim();
+  if (!name) return alert("Enter a name");
+  const playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
+  playlists.push({ name, songIds: [] });
+  localStorage.setItem('playlists', JSON.stringify(playlists));
+  document.getElementById('newPlaylistName').value = '';
+  loadPlaylists();
+});
+
+document.getElementById('addToPlaylistBtn').addEventListener('click', () => {
+  const checkboxes = document.querySelectorAll('#groupList input[type="checkbox"]:checked');
+  const ids = Array.from(checkboxes).map(cb => cb.value);
+  if (ids.length === 0) return alert("Select songs");
+  const playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
+  const playlistName = prompt("Add to which playlist?");
+  const playlist = playlists.find(p => p.name === playlistName);
+  if (!playlist) return alert("Playlist not found");
+  playlist.songIds.push(...ids);
+  localStorage.setItem('playlists', JSON.stringify(playlists));
+  loadPlaylists();
+});
+
+function loadPlaylists() {
+  const playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
+  const container = document.getElementById('playlistList');
+  container.innerHTML = '';
+  playlists.forEach(pl => {
+    const li = document.createElement('li');
+    li.textContent = `${pl.name} (${pl.songIds.length} songs)`;
+    container.appendChild(li);
+  });
+}
+
+const whiteNoisePlayer = document.getElementById('whiteNoisePlayer');
+document.getElementById('toggleWhiteNoise').addEventListener('click', () => {
+  if (whiteNoisePlayer.paused) whiteNoisePlayer.play();
+  else whiteNoisePlayer.pause();
+});
+
+window.onload = () => {
+  displaySongs();
+  groupSongs();
+  loadPlaylists();
+};
