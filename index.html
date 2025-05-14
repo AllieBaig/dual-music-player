@@ -2,56 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Dual Music Player</title>
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#007bff"/>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      background: #f9f9f9;
-    }
-    h1 {
-      text-align: center;
-    }
-    button {
-      margin: 10px 0;
-    }
-    ul#songList {
-      list-style: none;
-      padding: 0;
-    }
-    #songList li {
-      background: #e0e0e0;
-      margin-bottom: 6px;
-      padding: 10px;
-      cursor: pointer;
-    }
+    body {font-family:sans-serif;padding:20px;background:#f9f9f9;}
+    h1{text-align:center;}
+    input,button{width:100%;margin:10px 0;padding:10px;font-size:1rem;}
+    ul#songList{list-style:none;padding:0;}
+    #songList li{background:#e0e0e0;margin-bottom:6px;padding:10px;cursor:pointer;}
+    #stats{margin-top:1rem;font-weight:bold;}
   </style>
 </head>
 <body>
   <h1>Dual Music Player</h1>
 
-  <input type="file" id="fileInput" multiple accept="audio/*" />
-  <br />
-
+  <input id="fileInput" type="file" multiple accept="audio/*,.mp3,.wav,.aac,.m4a"/>
   <button id="toggleWhiteNoise">Toggle White Noise</button>
-
   <ul id="songList"></ul>
-
-  <audio id="audioPlayer" controls style="width: 100%; margin-top: 20px;"></audio>
+  <audio id="audioPlayer" controls style="width:100%;margin-top:20px;"></audio>
   <audio id="whiteNoisePlayer" loop hidden>
-    <source src="white-noise.mp3" type="audio/mp3" />
-    Your browser does not support the audio element.
+    <source src="white-noise.mp3" type="audio/mp3"/>
   </audio>
 
-  <!-- Core Functionality -->
-  <script src="script.js" defer></script>
+  <button onclick="showBadges()">Show Badges</button>
+  <div id="stats"></div>
 
-  <!-- Optional Modules -->
+  <script src="script.js" defer></script>
   <script src="badges.js" defer></script>
-  <script src="playlist.js" defer></script>
-  <script src="auth.js" defer></script>
 </body>
 </html>
