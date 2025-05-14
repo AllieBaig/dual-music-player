@@ -1,14 +1,25 @@
-const audioPlayer = document.getElementById("audioPlayer");
-const whiteNoisePlayer = document.getElementById("whiteNoisePlayer");
+// script.js
+
 const fileInput = document.getElementById("fileInput");
 const songList = document.getElementById("songList");
-const playlistSelect = document.getElementById("playlistSelect");
+const audioPlayer = document.getElementById("audioPlayer");
+const whiteNoisePlayer = document.getElementById("whiteNoisePlayer");
+const toggleWhiteNoise = document.getElementById("toggleWhiteNoise");
+
 let currentPlaylist = [];
+let supportedFormats = [
+  "audio/mpeg",
+  "audio/mp3",
+  "audio/wav",
+  "audio/x-wav",
+  "audio/mp4",
+  "audio/aac",
+  "audio/ogg",
+  "audio/webm",
+  "audio/x-m4a"
+];
 
-const supportedFormats = ['audio/mp3', 'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/x-m4a'];
-
-fileInput.setAttribute('accept', supportedFormats.join(','));
-
+// Load audio from file input
 fileInput.addEventListener("change", function () {
   const files = Array.from(this.files);
   files.forEach((file) => {
@@ -16,7 +27,6 @@ fileInput.addEventListener("change", function () {
       console.warn(`Unsupported format: ${file.name}`);
       return;
     }
-
     const url = URL.createObjectURL(file);
     currentPlaylist.push({ name: file.name, url });
   });
@@ -24,64 +34,36 @@ fileInput.addEventListener("change", function () {
   updateSongList();
 });
 
+// Update the UI list of songs
 function updateSongList() {
   songList.innerHTML = "";
   currentPlaylist.forEach((song, index) => {
     const li = document.createElement("li");
     li.textContent = song.name;
-    li.onclick = () => {
-      playAudio(song.url);
-    };
+    li.onclick = () => playAudio(song.url);
     songList.appendChild(li);
   });
 }
 
+// Play selected song
 function playAudio(url) {
-  if (!url) return;
   audioPlayer.src = url;
-
-  // On iOS, audio playback must be triggered by user interaction
-  audioPlayer.play().catch(err => {
-    console.warn("Playback failed:", err.message);
-  });
-
-  logListeningTime();
+  audioPlayer.play();
 }
 
-document.getElementById("toggleWhiteNoise").addEventListener("click", () => {
+// White noise toggle
+toggleWhiteNoise.addEventListener("click", () => {
   if (whiteNoisePlayer.paused) {
-    whiteNoisePlayer.play().catch(err => {
-      console.warn("White noise error:", err.message);
-    });
+    whiteNoisePlayer.play();
+    toggleWhiteNoise.textContent = "Stop White Noise";
   } else {
     whiteNoisePlayer.pause();
+    toggleWhiteNoise.textContent = "Play White Noise";
   }
 });
 
-function logListeningTime() {
-  const startTime = Date.now();
-  const onPauseOrEnd = () => {
-    const minutes = Math.floor((Date.now() - startTime) / 60000);
-    let timeListened = parseInt(localStorage.getItem("timeListened") || "0");
-    timeListened += minutes;
-    localStorage.setItem("timeListened", timeListened.toString());
-
-    if (typeof updateBadges === "function") {
-      updateBadges(timeListened);
-    }
-
-    audioPlayer.removeEventListener("pause", onPauseOrEnd);
-    audioPlayer.removeEventListener("ended", onPauseOrEnd);
-  };
-
-  audioPlayer.addEventListener("pause", onPauseOrEnd);
-  audioPlayer.addEventListener("ended", onPauseOrEnd);
-}
-
-window.addEventListener("load", () => {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register("/service-worker.js")
-      .then(reg => console.log("SW registered:", reg.scope))
-      .catch(err => console.warn("SW failed:", err));
-  }
+// PWA install prompt (optional)
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  // You can show custom install UI if needed
 });
