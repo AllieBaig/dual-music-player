@@ -1,23 +1,63 @@
 
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dual Music Player</title>
+  <style type="text/css">
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f7f7f7;
+      color: #333;
+    }
+    input[type="file"],
+    input[type="text"],
+    button {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      font-weight: bold;
+    }
+    ul {
+      padding-left: 1rem;
+    }
+    audio {
+      width: 100%;
+      margin-top: 1rem;
+    }
+    h3 {
+      margin-top: 1rem;
+    }
+  </style>
 </head>
 <body>
-  <input type="file" id="fileInput" accept="audio/*" multiple />
+  <h1>Dual Music Player</h1>
+
+  <input id="fileInput" type="file" accept="audio/*" multiple="multiple" />
+
   <ul id="songList"></ul>
   <div id="groupList"></div>
-  <audio id="audioPlayer" controls></audio>
-  <button id="toggleWhiteNoise">Toggle White Noise</button>
-  <audio id="whiteNoisePlayer" loop src="white_noise.mp3"></audio>
 
-  <input type="text" id="newPlaylistName" placeholder="New Playlist Name">
-  <button id="createPlaylistBtn">Create Playlist</button>
-  <button id="addToPlaylistBtn">Add Selected to Playlist</button>
+  <audio id="audioPlayer" controls="controls"></audio>
+
+  <button id="toggleWhiteNoise" type="button">Toggle White Noise</button>
+  <audio id="whiteNoisePlayer" loop="loop" src="white_noise.mp3"></audio>
+
+  <input id="newPlaylistName" type="text" placeholder="New Playlist Name" />
+  <button id="createPlaylistBtn" type="button">Create Playlist</button>
+  <button id="addToPlaylistBtn" type="button">Add Selected to Playlist</button>
   <ul id="playlistList"></ul>
 
-  <script src="script.js"></script>
+  <script type="text/javascript" src="script.js"></script>
 </body>
 </html>
