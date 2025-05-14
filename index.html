@@ -2,34 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dual Music Player</title>
+
+  <!-- Progressive Web App -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#007bff" />
+
+  <!-- Apple PWA Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Dual Music Player" />
+  <link rel="apple-touch-icon" href="/icon.png" />
+
+  <!-- Manifest & Icon -->
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#007bff"/>
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon.png" />
+
   <style>
-    body {font-family:sans-serif;padding:20px;background:#f9f9f9;}
-    h1{text-align:center;}
-    input,button{width:100%;margin:10px 0;padding:10px;font-size:1rem;}
-    ul#songList{list-style:none;padding:0;}
-    #songList li{background:#e0e0e0;margin-bottom:6px;padding:10px;cursor:pointer;}
-    #stats{margin-top:1rem;font-weight:bold;}
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+      margin: 0;
+      background: #f0f0f0;
+    }
+    h1 {
+      text-align: center;
+    }
+    #player-controls, #stats {
+      margin: 1rem 0;
+      text-align: center;
+    }
+    input[type="file"] {
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
-  <h1>Dual Music Player</h1>
 
-  <input id="fileInput" type="file" multiple accept="audio/*,.mp3,.wav,.aac,.m4a"/>
-  <button id="toggleWhiteNoise">Toggle White Noise</button>
-  <ul id="songList"></ul>
-  <audio id="audioPlayer" controls style="width:100%;margin-top:20px;"></audio>
-  <audio id="whiteNoisePlayer" loop hidden>
-    <source src="white-noise.mp3" type="audio/mp3"/>
-  </audio>
+  <h1>🎧 Dual Music Player</h1>
 
-  <button onclick="showBadges()">Show Badges</button>
+  <div id="player-controls">
+    <input type="file" id="audio-upload" accept="audio/*" multiple />
+    <br/>
+    <button onclick="toggleWhiteNoise()">Toggle White Noise</button>
+    <button onclick="showBadges()">Show Badges</button>
+    <ul id="audio-list"></ul>
+  </div>
+
   <div id="stats"></div>
 
-  <script src="script.js" defer></script>
-  <script src="badges.js" defer></script>
+  <script src="script.js"></script>
+  <script src="badges.js"></script>
 </body>
 </html>
