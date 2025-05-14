@@ -1,69 +1,65 @@
 // script.js
 
-const fileInput = document.getElementById("fileInput");
-const songList = document.getElementById("songList");
-const audioPlayer = document.getElementById("audioPlayer");
-const whiteNoisePlayer = document.getElementById("whiteNoisePlayer");
-const toggleWhiteNoise = document.getElementById("toggleWhiteNoise");
+const fileInput       = document.getElementById("fileInput");
+const songList        = document.getElementById("songList");
+const audioPlayer     = document.getElementById("audioPlayer");
+const whiteNoise      = document.getElementById("whiteNoisePlayer");
+const toggleWhitespace= document.getElementById("toggleWhiteNoise");
+const statsDiv        = document.getElementById("stats");
 
-let currentPlaylist = [];
-let supportedFormats = [
-  "audio/mpeg",
-  "audio/mp3",
-  "audio/wav",
-  "audio/x-wav",
-  "audio/mp4",
-  "audio/aac",
-  "audio/ogg",
-  "audio/webm",
-  "audio/x-m4a"
-];
+let playlist = [];
+let startTime = null;
+const formats = ["audio/mpeg","audio/mp3","audio/wav","audio/aac","audio/ogg","audio/x-m4a"];
 
-// Load audio from file input
-fileInput.addEventListener("change", function () {
-  const files = Array.from(this.files);
-  files.forEach((file) => {
-    if (!supportedFormats.includes(file.type)) {
-      console.warn(`Unsupported format: ${file.name}`);
-      return;
-    }
-    const url = URL.createObjectURL(file);
-    currentPlaylist.push({ name: file.name, url });
+fileInput.addEventListener("change", () => {
+  Array.from(fileInput.files).forEach(file => {
+    if (!formats.includes(file.type)) return;
+    playlist.push({ name: file.name, url: URL.createObjectURL(file) });
   });
-
-  updateSongList();
+  renderSongs();
+  showStats();
 });
 
-// Update the UI list of songs
-function updateSongList() {
+function renderSongs() {
   songList.innerHTML = "";
-  currentPlaylist.forEach((song, index) => {
+  playlist.forEach(song => {
     const li = document.createElement("li");
     li.textContent = song.name;
-    li.onclick = () => playAudio(song.url);
+    li.onclick = () => playSong(song.url);
     songList.appendChild(li);
   });
 }
 
-// Play selected song
-function playAudio(url) {
+function playSong(url) {
   audioPlayer.src = url;
   audioPlayer.play();
+  startTime = Date.now();
 }
 
-// White noise toggle
-toggleWhiteNoise.addEventListener("click", () => {
-  if (whiteNoisePlayer.paused) {
-    whiteNoisePlayer.play();
-    toggleWhiteNoise.textContent = "Stop White Noise";
-  } else {
-    whiteNoisePlayer.pause();
-    toggleWhiteNoise.textContent = "Play White Noise";
-  }
+audioPlayer.addEventListener("pause",   recordTime);
+audioPlayer.addEventListener("ended",   recordTime);
+
+function recordTime() {
+  if (!startTime) return;
+  const seconds = (Date.now() - startTime) / 1000;
+  let total = parseFloat(localStorage.getItem("listenTime")||"0");
+  total += seconds;
+  localStorage.setItem("listenTime", total.toString());
+  startTime = null;
+  showStats();
+}
+
+toggleWhitespace.addEventListener("click", () => {
+  if (whiteNoise.paused) whiteNoise.play();
+  else whiteNoise.pause();
 });
 
-// PWA install prompt (optional)
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  // You can show custom install UI if needed
-});
+function showStats() {
+  const total = parseFloat(localStorage.getItem("listenTime")||"0");
+  const mins  = Math.floor(total/60);
+  const secs  = Math.floor(total%60);
+  statsDiv.textContent = `You’ve listened: ${mins}m ${secs}s`;
+}
+
+// Ensure stats persist on reload
+window.addEventListener("load", showStats);
