@@ -11,7 +11,10 @@ function displaySongs() {
     li.textContent = song.name;
     li.onclick = () => {
       audioPlayer.src = song.url;
-      audioPlayer.play();
+      audioPlayer.play().catch(err => {
+        console.warn("Playback prevented:", err);
+        alert("Please tap the screen to allow audio playback.");
+      });
     };
     songList.appendChild(li);
   });
@@ -25,6 +28,7 @@ function displaySongs() {
     const updated = [...songs, ...newSongs];
     localStorage.setItem("songs", JSON.stringify(updated));
     displaySongs();
+    groupSongs();
   });
 }
 
@@ -92,8 +96,13 @@ function loadPlaylists() {
 
 const whiteNoisePlayer = document.getElementById('whiteNoisePlayer');
 document.getElementById('toggleWhiteNoise').addEventListener('click', () => {
-  if (whiteNoisePlayer.paused) whiteNoisePlayer.play();
-  else whiteNoisePlayer.pause();
+  if (whiteNoisePlayer.paused) {
+    whiteNoisePlayer.play().catch(err => {
+      alert("Tap the screen first to allow audio playback.");
+    });
+  } else {
+    whiteNoisePlayer.pause();
+  }
 });
 
 window.onload = () => {
