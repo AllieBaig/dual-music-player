@@ -1,37 +1,57 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#007bff" />
   <title>Dual Music Player</title>
-  <script src="auth.js" type="text/javascript" defer="defer"></script>
-  <script src="script.js" type="text/javascript" defer="defer"></script>
-  <script src="playlist.js" type="text/javascript" defer="defer"></script>
-  <script src="badges.js" type="text/javascript" defer="defer"></script>
-  <style type="text/css">
-    body { font-family: sans-serif; padding: 1rem; background: #f8f8f8; }
-    input, button, select { width: 100%; padding: 0.75rem; margin: 0.5rem 0; font-size: 1rem; }
-    ul { list-style: none; padding: 0; }
-    li { padding: 0.5rem; background: #fff; margin: 0.25rem 0; border-radius: 5px; }
-    audio { width: 100%; margin-top: 1rem; }
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#000000" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    button {
+      margin: 10px 0;
+    }
+    ul#songList {
+      list-style: none;
+      padding: 0;
+    }
+    #songList li {
+      background: #e0e0e0;
+      margin-bottom: 6px;
+      padding: 10px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <div id="userStatus"></div>
   <h1>Dual Music Player</h1>
-  <input id="fileInput" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav" multiple="multiple" />
-  <select id="playlistSelect"></select>
+
+  <input type="file" id="fileInput" multiple accept="audio/*" />
+  <br />
+
+  <button id="toggleWhiteNoise">Toggle White Noise</button>
+
   <ul id="songList"></ul>
-  <button id="createPlaylist" type="button">Create Playlist</button>
-  <button id="toggleWhiteNoise" type="button">Toggle White Noise</button>
-  <audio id="audioPlayer" controls="controls"></audio>
-  <audio id="whiteNoisePlayer" loop="loop" src="white_noise.mp3"></audio>
-  <div id="badges"></div>
-  <noscript><p>Please enable JavaScript.</p></noscript>
+
+  <audio id="audioPlayer" controls style="width: 100%; margin-top: 20px;"></audio>
+  <audio id="whiteNoisePlayer" loop hidden>
+    <source src="white-noise.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Core Functionality -->
+  <script src="script.js" defer></script>
+
+  <!-- Optional Modules -->
+  <script src="badges.js" defer></script>
+  <script src="playlist.js" defer></script>
+  <script src="auth.js" defer></script>
 </body>
 </html>
